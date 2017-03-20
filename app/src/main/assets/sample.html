@@ -1,0 +1,134 @@
+<html>
+    <head>
+        <meta content="text/html; charset=utf-8" http-equiv="content-type">
+        <title>
+            js调用java
+        </title>
+    </head>
+
+    <body>
+    <p>
+        <xmp id="show">
+        </xmp>
+    </p>
+    <p>
+        <xmp id="init">
+        </xmp>
+    </p>
+    <p>
+        <input type="text" id="text1" value="用户名(username)"/>
+    </p>
+    <p>
+        <input type="text" id="text2" value="password"/>
+    </p>
+    <p>
+        <input type="button" id="enter" value="测试登录" onclick="testLogin();"/>
+    </p>
+    <p>
+        <input type="button" id="enter0" value="发消息给Native" onclick="sendMessage();"/>
+    </p>
+    <p>
+        <input type="button" id="enter1" value="调用Native方法" onclick="callNative();"/>
+    </p>
+    <p>
+        <input type="file" id="open" value="打开文件" onclick="onOpen();"/>
+    </p>
+    <p>
+        <input type="button" id="enter2" value="显示html" onclick="testDiv();"/>
+    </p>
+    </body>
+    <script>
+
+        function testLogin() {
+            var str1 = document.getElementById("text1").value;
+            var str2 = document.getElementById("text2").value;
+            var data = "name=" + str1 + ",password=" + str2;
+            //call native method
+            window.WebViewJavascriptBridge.callHandler(
+                'login'
+                , {'param': data }
+                , function(responseData) {
+                    document.getElementById("show").innerHTML = "repsonseData from java, data = " + responseData
+                }
+            );
+        }
+
+        function sendMessage() {
+            // 发送消息给java本地代码
+            var data = {id: 1, content: "JavaScript发送的消息"};
+            window.WebViewJavascriptBridge.send(
+                data
+                , function(responseData) {
+                    document.getElementById("show").innerHTML = "repsonseData from java, data = " + responseData
+                }
+            );
+        }
+
+        function callNative() {
+            var data = "我要你一个url";
+            //call native method
+            window.WebViewJavascriptBridge.callHandler(
+                'callNative'
+                , {'param': data }
+                , function(responseData) {
+                 document.getElementById("show").innerHTML = "callNative callback, data = " + responseData
+                }
+            );
+        }
+
+        function testDiv() {
+            document.getElementById("show").innerHTML = document.getElementsByTagName("html")[0].innerHTML;
+        }
+
+        function onOpen() {
+          　
+            var data = "我要你打开相册";
+            //call native method
+            window.WebViewJavascriptBridge.callHandler(
+                'open'
+                , {'param': data }
+                , function(responseData) {
+                 console.log('JS got a responseData: ' + responseData);
+                 document.getElementById("show").innerHTML = "onOpen callback, data = " + responseData;
+                }
+            );
+        }
+
+        function bridgeLog(logContent) {
+            document.getElementById("show").innerHTML = logContent;
+        }
+
+        function connectWebViewJavascriptBridge(callback) {
+            if (window.WebViewJavascriptBridge) {
+                callback(WebViewJavascriptBridge)
+            } else {
+                document.addEventListener(
+                    'WebViewJavascriptBridgeReady'
+                    , function() {
+                        callback(WebViewJavascriptBridge)
+                    },
+                    false
+                );
+            }
+        }
+
+        connectWebViewJavascriptBridge(function(bridge) {
+            bridge.init(function(message, responseCallback) {
+                console.log('JS got a message: ' + message);
+                document.getElementById("show").innerHTML = ("data from Java: = " + message);
+                var data = {
+                    'Javascript Responds': 'Hello java! 我是 JS!'
+                };
+                console.log('JS responding with: ' + data);
+                responseCallback(data);
+            });
+
+            bridge.registerHandler("functionInJs", function(data, responseCallback) {
+                document.getElementById("show").innerHTML = ("data from Java: = " + data);
+                var responseData = "Javascript got a message: " + data;
+                responseCallback(responseData);
+            });
+        })
+    </script>
+
+</html>

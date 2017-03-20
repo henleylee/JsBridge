@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">JsBridge</string>
+
+    <string name="button_name_1">Java调用JS</string>
+    <string name="button_name_2">发送消息给JS</string>
+
+</resources>
