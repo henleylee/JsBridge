@@ -240,10 +240,10 @@ public final class BridgeWebViewHelper implements WebViewJavascriptBridge {
     }
 
     /**
-     * 将消息添加到消息队列或直接处理
+     * 将消息添加到启动消息集合或直接处理
      */
     private void queueMessage(Message message) {
-        if (startupMessage != null) {
+        if (startupMessage != null) { // 判断启动消息集合是否为空
             startupMessage.add(message);
         } else {
             dispatchMessage(message);
@@ -262,7 +262,7 @@ public final class BridgeWebViewHelper implements WebViewJavascriptBridge {
         }
         String javascriptCommand = String.format(JsBridgeHelper.JS_HANDLE_MESSAGE_FROM_JAVA, messageJson);
         if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
-            mWebView.loadUrl(javascriptCommand);
+            mWebView.loadUrl(javascriptCommand); // 调用WebViewJavascriptBridge._handleMessageFromNative(messageJson)这个JS方法
         }
     }
 

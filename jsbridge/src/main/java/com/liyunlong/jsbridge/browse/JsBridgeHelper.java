@@ -36,15 +36,25 @@ final class JsBridgeHelper {
         return String.format(CALLBACK_ID_FORMAT, uniqueId + UNDERLINE + SystemClock.currentThreadTimeMillis());
     }
 
+    /**
+     * 从JS返回的Url中获取函数名
+     *
+     * @param jsUrl Url
+     */
     static String parseFunctionName(String jsUrl) {
         return jsUrl.replace("javascript:WebViewJavascriptBridge.", "").replaceAll("\\(.*\\);", "");
     }
 
-    static String getDataFromReturnUrl(String url) {
-        if (url.startsWith(JSBRIDGE_FETCH_QUEUE)) {
-            return url.replace(JSBRIDGE_FETCH_QUEUE, EMPTY_CHAR);
+    /**
+     * 从JS返回的Url中获取Data
+     *
+     * @param jsUrl Url
+     */
+    static String getDataFromReturnUrl(String jsUrl) {
+        if (jsUrl.startsWith(JSBRIDGE_FETCH_QUEUE)) {
+            return jsUrl.replace(JSBRIDGE_FETCH_QUEUE, EMPTY_CHAR);
         }
-        String temp = url.replace(JSBRIDGE_RETURN_DATA, EMPTY_CHAR);
+        String temp = jsUrl.replace(JSBRIDGE_RETURN_DATA, EMPTY_CHAR);
         String[] functionAndData = temp.split(SPLIT_MARK);
         if (functionAndData.length >= 2) {
             StringBuilder sb = new StringBuilder();
@@ -57,12 +67,12 @@ final class JsBridgeHelper {
     }
 
     /**
-     * 根据Url获取方法名称
+     * 从JS返回的Url中获取方法名称
      *
-     * @param url Url
+     * @param jsUrl Url
      */
-    static String getFunctionFromReturnUrl(String url) {
-        String temp = url.replace(JSBRIDGE_RETURN_DATA, EMPTY_CHAR);
+    static String getFunctionFromReturnUrl(String jsUrl) {
+        String temp = jsUrl.replace(JSBRIDGE_RETURN_DATA, EMPTY_CHAR);
         String[] functionAndData = temp.split(SPLIT_MARK);
         if (functionAndData.length >= 1) {
             return functionAndData[0];
@@ -72,7 +82,7 @@ final class JsBridgeHelper {
 
 
     /**
-     * js 文件将注入为第一个script引用
+     * 从Url中加载JS(JS文件将注入为第一个Script引用)
      *
      * @param view
      * @param url
@@ -96,17 +106,17 @@ final class JsBridgeHelper {
     }
 
     /**
-     * 将assets文件转换为字符串
+     * 将Assets文件转换为字符串
      *
      * @param context  上下文
      * @param fileName 文件名
      */
     private static String assetFile2Str(Context context, String fileName) {
-        InputStream in = null;
+        InputStream inputStream = null;
         BufferedReader bufferedReader = null;
         try {
-            in = context.getAssets().open(fileName);
-            bufferedReader = new BufferedReader(new InputStreamReader(in));
+            inputStream = context.getAssets().open(fileName);
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
             StringBuilder sb = new StringBuilder();
             do {
@@ -123,8 +133,8 @@ final class JsBridgeHelper {
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
-                if (in != null) {
-                    in.close();
+                if (inputStream != null) {
+                    inputStream.close();
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -57,7 +57,7 @@ public class SampleActivity extends Activity implements OnClickListener {
         findViewById(R.id.button2).setOnClickListener(this);
 
         // 打开页面，也可以支持网络url
-        webView.loadUrl("file:///android_asset/sample.html");
+        webView.loadUrl("file:///android_asset/demo.html");
 
         // 设置默认处理程序，用于处理由JavaScript发送的没有指定处理程序名称的消息
         webView.setDefaultHandler(new BridgeHandler() {
