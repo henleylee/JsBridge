@@ -8,11 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * data of bridge
+ * JsBridge消息对象
  *
- * @author haoqing
+ * @author liyunlong
+ * @date 2017/7/10 11:16
  */
-public class Message {
+final class Message {
 
     private final static String DATA = "data";
     private final static String CALLBACK_ID = "callbackId";
@@ -66,6 +67,9 @@ public class Message {
         this.responseData = responseData;
     }
 
+    /**
+     * 将Message对象转换为JSON字符串
+     */
     public String toJson() {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -97,8 +101,11 @@ public class Message {
         return message;
     }
 
+    /**
+     * 将JSON字符串转换为Message集合
+     */
     public static List<Message> toArrayList(String jsonStr) {
-        List<Message> list = new ArrayList<Message>();
+        List<Message> list = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonStr);
             for (int i = 0; i < jsonArray.length(); i++) {

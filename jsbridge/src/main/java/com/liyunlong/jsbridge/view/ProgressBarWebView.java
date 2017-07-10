@@ -11,22 +11,22 @@ import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.widget.LinearLayout;
 
+import com.liyunlong.jsbridge.JsWeb.CustomWebChromeClient;
+import com.liyunlong.jsbridge.JsWeb.CustomWebViewClient;
 import com.liyunlong.jsbridge.browse.BridgeHandler;
 import com.liyunlong.jsbridge.browse.BridgeWebView;
 import com.liyunlong.jsbridge.browse.Callback;
-import com.liyunlong.jsbridge.browse.JsWeb.CustomWebChromeClient;
-import com.liyunlong.jsbridge.browse.JsWeb.CustomWebViewClient;
 import com.liyunlong.jsbridge.browse.JavaCallHandler;
 import com.liyunlong.jsbridge.browse.JsHandler;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 /**
- * 带有进度条的 WebView
+ * 带有进度条的BridgeWebView
  *
- * @author YEZHENNAN220
- * @date 2016-07-07 17:08
+ * @author liyunlong
+ * @date 2017/7/10 11:35
  */
 public class ProgressBarWebView extends LinearLayout {
 
@@ -36,16 +36,13 @@ public class ProgressBarWebView extends LinearLayout {
     private BridgeWebView mWebView;
 
     public ProgressBarWebView(Context context) {
-        super(context);
-        init(context, null);
+        this(context, null);
     }
 
     public ProgressBarWebView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs);
+        this(context, attrs, 0);
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public ProgressBarWebView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
@@ -59,7 +56,6 @@ public class ProgressBarWebView extends LinearLayout {
 
     private void init(Context context, AttributeSet attrs) {
         setOrientation(LinearLayout.VERTICAL);
-
         // 初始化进度条
         if (mProgressBar == null) {
             mProgressBar = new NumberProgressBar(context, attrs);
@@ -83,8 +79,8 @@ public class ProgressBarWebView extends LinearLayout {
         webviewSettings.setSupportZoom(true);
 
         // 自适应屏幕大小
-//        webviewSettings.setUseWideViewPort(true);
-//        webviewSettings.setLoadWithOverviewMode(true);
+        webviewSettings.setUseWideViewPort(true);
+        webviewSettings.setLoadWithOverviewMode(true);
         mWebView.setOnLongClickListener(new OnLongClickListener() {
 
             @Override
@@ -92,7 +88,7 @@ public class ProgressBarWebView extends LinearLayout {
                 return true;
             }
         });
-        //
+        // WebView返回处理
         mWebView.setOnKeyListener(new OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -120,57 +116,42 @@ public class ProgressBarWebView extends LinearLayout {
     }
 
     /**
-     * Loads the given URL.
-     *
-     * @param url the URL of the resource to load
+     * 加载指定的Url
      */
     public void loadUrl(String url) {
-        loadUrl(url, null);
+        mWebView.loadUrl(url);
     }
 
     /**
-     * Loads the given URL with the specified additional HTTP headers.
-     *
-     * @param url                   the URL of the resource to load
-     * @param additionalHttpHeaders the additional headers to be used in the
-     *                              HTTP request for this URL, specified as a map from name to
-     *                              value. Note that if this map contains any of the headers
-     *                              that are set by default by this WebView, such as those
-     *                              controlling caching, accept types or the User-Agent, their
-     *                              values may be overriden by this WebView's defaults.
+     * 加载指定的Url
      */
     public void loadUrl(String url, Map<String, String> additionalHttpHeaders) {
-        loadUrl(url, additionalHttpHeaders, null);
+        mWebView.loadUrl(url, additionalHttpHeaders);
     }
 
     /**
-     * Loads the given URL with the specified additional HTTP headers.
-     *
-     * @param url                   the URL of the resource to load
-     * @param additionalHttpHeaders the additional headers to be used in the
-     *                              HTTP request for this URL, specified as a map from name to
-     *                              value. Note that if this map contains any of the headers
-     *                              that are set by default by this WebView, such as those
-     *                              controlling caching, accept types or the User-Agent, their
-     *                              values may be overriden by this WebView's defaults.
-     * @param returnCallback        the CallBackFunction to be Used call js registerHandler Function,
-     *                              rerurn response data.
+     * 加载指定的Url
      */
     public void loadUrl(String url, Map<String, String> additionalHttpHeaders, Callback returnCallback) {
         mWebView.loadUrl(url, additionalHttpHeaders, returnCallback);
     }
 
+    /**
+     * 设置WebViewClient
+     */
     public void setWebViewClient(CustomWebViewClient client) {
         mWebView.setWebViewClient(client);
     }
 
+    /**
+     * 设置ChromeClient
+     */
     public void setWebChromeClient(CustomWebChromeClient chromeClient) {
         mWebView.setWebChromeClient(chromeClient);
     }
 
     /**
-     * @param handler default handler,handle messages send by js without assigned handler name,
-     *                if js message has handler name, it will be handled by named handlers registered by native
+     * 设置默认处理程序
      */
     public void setDefaultHandler(BridgeHandler handler) {
         mWebView.setDefaultHandler(handler);
@@ -185,75 +166,43 @@ public class ProgressBarWebView extends LinearLayout {
     }
 
     /**
-     * 注册本地java方法，以供js端调用
+     * 注册处理程序以供JavaScript调用并响应JavaScript发送的消息
      *
-     * @param handlerName 方法名称
-     * @param handler     回调接口
+     * @param handlerName 处理程序名称
+     * @param handler     处理程序(用于响应由JavaScript发送的指定处理程序名称的消息)
      */
     public void registerHandler(final String handlerName, final JsHandler handler) {
-        mWebView.registerHandler(handlerName, new BridgeHandler() {
-            @Override
-            public void handler(String data, Callback callback) {
-                if (handler != null) {
-                    handler.onHandler(handlerName, data, callback);
-                }
-            }
-        });
+        mWebView.registerHandler(handlerName, handler);
     }
 
     /**
-     * 批量注册本地java方法，以供js端调用
+     * 批量注册处理程序以供JavaScript调用并响应JavaScript发送的消息
      *
-     * @param handlerNames 方法名称数组
-     * @param handler      回调接口
+     * @param handlerNames 处理程序名称集合
+     * @param handler      处理程序(用于响应由JavaScript发送的指定处理程序名称的消息)
      */
-    public void registerHandlers(final ArrayList<String> handlerNames, final JsHandler handler) {
-        if (handler != null) {
-            for (final String handlerName : handlerNames) {
-                mWebView.registerHandler(handlerName, new BridgeHandler() {
-                    @Override
-                    public void handler(String data, Callback callback) {
-                        handler.onHandler(handlerName, data, callback);
-                    }
-                });
-            }
-        }
+    public void registerHandlers(final Collection<String> handlerNames, final JsHandler handler) {
+        mWebView.registerHandler(handlerNames, handler);
     }
 
     /**
-     * 调用js端已经注册好的方法
+     * 调用JavaScript注册的处理程序
      *
-     * @param handlerName 方法名称
-     * @param javaData    本地端传递给js端的参数，json字符串
-     * @param handler     回调接口
+     * @param handlerName 处理程序名称
+     * @param javaData    Native端传递给JS端的参数(JSON字符串)
+     * @param handler     处理程序(用于处理由JavaScript响应的消息)
      */
     public void callHandler(final String handlerName, String javaData, final JavaCallHandler handler) {
-        mWebView.callHandler(handlerName, javaData, new Callback() {
-            @Override
-            public void onCallback(String data) {
-                if (handler != null) {
-                    handler.onHandler(handlerName, data);
-                }
-            }
-        });
+        mWebView.callHandler(handlerName, javaData, handler);
     }
 
     /**
-     * 批量调用js端已经注册好的方法
+     * 批量调用JavaScript注册的处理程序
      *
-     * @param handlerInfos 方法名称与参数的map，方法名为key
-     * @param handler      回调接口
+     * @param handlerInfos 方法名称与参数的Map(方法名称为key，参数为value)
+     * @param handler      处理程序(用于处理由JavaScript响应的消息)
      */
     public void callHandler(final Map<String, String> handlerInfos, final JavaCallHandler handler) {
-        if (handler != null) {
-            for (final Map.Entry<String, String> entry : handlerInfos.entrySet()) {
-                mWebView.callHandler(entry.getKey(), entry.getValue(), new Callback() {
-                    @Override
-                    public void onCallback(String data) {
-                        handler.onHandler(entry.getKey(), data);
-                    }
-                });
-            }
-        }
+        mWebView.callHandler(handlerInfos, handler);
     }
 }

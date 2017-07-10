@@ -10,28 +10,33 @@ import java.net.URLDecoder;
 import java.util.List;
 
 /**
- * Created by bruce on 10/28/15.
+ * BridgeWebViewClient
+ *
+ * @author liyunlong
+ * @date 2017/7/10 10:41
  */
 public class BridgeWebViewClient extends WebViewClient {
 
     private static final String TAG = BridgeWebViewClient.class.getSimpleName();
-    private boolean hasLoadJsandDispatchMessage = false;
+    /** 是否已经注入Javascript并且处理启动消息 */
+    private boolean hasLoadJsAndDispatchMessage = false;
 
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         try {
             url = URLDecoder.decode(url, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            url = URLDecoder.decode(url);
         }
         Log.i(TAG, "Url = " + url);
         if (view instanceof BridgeWebView) {
-            BridgeWebView webView = (BridgeWebView) view;
-            if (url.startsWith(BridgeUtil.CUSTOM_RETURN_DATA)) { // 如果是返回数据
-                webView.handlerReturnData(url);
+            BridgeWebView bridgeWebView = (BridgeWebView) view;
+            BridgeWebViewHelper helper = bridgeWebView.getBridgeWebViewHelper(); // BridgeWebView辅助类
+            if (url.startsWith(JsBridgeHelper.JSBRIDGE_RETURN_DATA)) { // 如果是返回数据
+                helper.handlerReturnData(url);
                 return true;
-            } else if (url.startsWith(BridgeUtil.CUSTOM_PROTOCOL_SCHEME)) { // 刷新消息队列
-                webView.flushMessageQueue();
+            } else if (url.startsWith(JsBridgeHelper.JSBRIDGE_PROTOCOL_SCHEME)) { // 刷新消息队列
+                helper.flushMessageQueue();
                 return true;
             }
         }
@@ -46,19 +51,20 @@ public class BridgeWebViewClient extends WebViewClient {
     @Override
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
-        if (view instanceof BridgeWebView && !hasLoadJsandDispatchMessage) {
-            BridgeWebView webView = (BridgeWebView) view;
-            BridgeUtil.webViewLoadLocalJs(view, BridgeUtil.TO_LOAD_JS); // 注入本地Javascript
-            List<Message> messageList = webView.getStartupMessage();
-            if (messageList != null && !messageList.isEmpty()) {
+        if (view instanceof BridgeWebView && !hasLoadJsAndDispatchMessage) {
+            BridgeWebView bridgeWebView = (BridgeWebView) view;
+            BridgeWebViewHelper helper = bridgeWebView.getBridgeWebViewHelper(); // BridgeWebView辅助类
+            JsBridgeHelper.webViewLoadLocalJs(view, JsBridgeHelper.TO_LOAD_JS); // 注入本地Javascript
+            List<Message> messageList = bridgeWebView.getStartupMessages(); // 获取启动消息集合
+            if (messageList != null && !messageList.isEmpty()) { // 判断消息集合是否为null
                 // 循环遍历处理消息
                 for (Message message : messageList) {
-                    webView.dispatchMessage(message);
+                    helper.dispatchMessage(message);
                 }
                 messageList.clear();
-                webView.setStartupMessage(null);
+                bridgeWebView.setStartupMessage(null); // 将启动消息集合置空
             }
-            hasLoadJsandDispatchMessage = true;
+            hasLoadJsAndDispatchMessage = true;
         }
     }
 

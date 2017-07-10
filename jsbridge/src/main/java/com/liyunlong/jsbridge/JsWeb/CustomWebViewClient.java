@@ -1,5 +1,4 @@
-package com.liyunlong.jsbridge.browse.JsWeb;
-
+package com.liyunlong.jsbridge.JsWeb;
 
 import android.support.annotation.NonNull;
 import android.webkit.WebView;
@@ -9,10 +8,8 @@ import com.liyunlong.jsbridge.browse.BridgeWebViewClient;
 import java.util.Map;
 
 /**
- * Class description
- *
- * @author YEZHENNAN220
- * @date 2016-07-08 13:54
+ * @author liyunlong
+ * @date 2017/7/10 10:42
  */
 public abstract class CustomWebViewClient extends BridgeWebViewClient {
 
@@ -33,20 +30,14 @@ public abstract class CustomWebViewClient extends BridgeWebViewClient {
     }
 
     /**
-     * return errorUrl
-     *
-     * @param url
-     * @return
+     * 返回错误UrlHeader
      */
-    public abstract String onPageError(String url);
+    abstract String onPageError(String url);
 
     /**
-     * HttpHeaders
-     * return
-     *
-     * @return
+     * 返回Http请求
      */
     @NonNull
-    public abstract Map<String, String> onPageHeaders(String url);
+    abstract Map<String, String> onPageHeaders(String url);
 
 }

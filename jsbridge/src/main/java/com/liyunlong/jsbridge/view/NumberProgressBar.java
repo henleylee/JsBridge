@@ -14,7 +14,10 @@ import android.view.View;
 import com.liyunlong.jsbridge.R;
 
 /**
- * NumberProgressBar
+ * 进度条
+ *
+ * @author liyunlong
+ * @date 2017/7/10 11:32
  */
 public class NumberProgressBar extends View {
 

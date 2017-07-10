@@ -1,5 +1,8 @@
 package com.liyunlong.jsbridge.browse;
 
+/**
+ * 默认处理程序(用于处理由JavaScript发送的没有指定处理程序名称的消息)
+ */
 public class DefaultHandler implements BridgeHandler {
 
     @Override

@@ -1,4 +1,4 @@
-package com.liyunlong.jsbridge.browse.JsWeb;
+package com.liyunlong.jsbridge.JsWeb;
 
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -7,15 +7,15 @@ import android.webkit.WebView;
 import com.liyunlong.jsbridge.view.NumberProgressBar;
 
 /**
- * Class description
+ * 带进度条的ChromeClient
  *
- * @author YEZHENNAN220
- * @date 2016-07-08 14:05
+ * @author liyunlong
+ * @date 2017/7/10 10:39
  */
 public class CustomWebChromeClient extends WebChromeClient {
 
     private NumberProgressBar mProgressBar;
-    private final static int DEF = 95;
+    private final static int DEFAULT_PROGRESS = 95;
 
     public CustomWebChromeClient(NumberProgressBar progressBar) {
         this.mProgressBar = progressBar;
@@ -23,7 +23,7 @@ public class CustomWebChromeClient extends WebChromeClient {
 
     @Override
     public void onProgressChanged(WebView view, int newProgress) {
-        if (newProgress >= DEF) {
+        if (newProgress >= DEFAULT_PROGRESS) {
             mProgressBar.setVisibility(View.GONE);
         } else {
             if (mProgressBar.getVisibility() == View.GONE) {
@@ -34,4 +34,5 @@ public class CustomWebChromeClient extends WebChromeClient {
         }
         super.onProgressChanged(view, newProgress);
     }
+
 }

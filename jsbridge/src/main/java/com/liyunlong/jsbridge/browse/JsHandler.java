@@ -1,10 +1,10 @@
 package com.liyunlong.jsbridge.browse;
 
 /**
- * Class description
+ * 处理程序(用于响应由JavaScript发送的指定处理程序名称的消息)
  *
- * @author YEZHENNAN220
- * @date 2016-07-08 16:24
+ * @author liyunlong
+ * @date 2017/7/10 10:45
  */
 public interface JsHandler {
 

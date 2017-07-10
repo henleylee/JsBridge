@@ -1,12 +1,7 @@
 package com.liyunlong.jsbridge.browse;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.os.Build;
 import android.os.Looper;
-import android.os.SystemClock;
 import android.text.TextUtils;
-import android.util.AttributeSet;
 import android.webkit.WebView;
 
 import java.util.ArrayList;
@@ -16,52 +11,39 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
-
-    private static final String TAG = "BridgeWebView";
+/**
+ * BridgeWebView辅助类
+ *
+ * @author liyunlong
+ * @date 2017/7/10 11:53
+ */
+public final class BridgeWebViewHelper implements WebViewJavascriptBridge {
 
     private Map<String, Callback> responseCallbacks = new HashMap<>();
     private Map<String, BridgeHandler> messageHandlers = new HashMap<>(); // 处理程序Map
     private BridgeHandler defaultHandler = new DefaultHandler(); // 默认处理程序
     private List<Message> startupMessage = new ArrayList<>(); // 启动消息集合
     private long uniqueId = 0; // 唯一标识
+    private WebView mWebView;
 
-    public BridgeWebView(Context context) {
-        this(context, null);
-    }
-
-    public BridgeWebView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public BridgeWebView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        initWebView();
-    }
-
-    @SuppressLint("SetJavaScriptEnabled")
-    private void initWebView() {
-        this.setVerticalScrollBarEnabled(false);
-        this.setHorizontalScrollBarEnabled(false);
-        this.getSettings().setJavaScriptEnabled(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            WebView.setWebContentsDebuggingEnabled(true);
-        }
-        this.setWebViewClient(new BridgeWebViewClient());
+    public BridgeWebViewHelper(WebView webView) {
+        this.mWebView = webView;
     }
 
     /**
      * 返回启动消息集合
      */
-    public List<Message> getStartupMessage() {
+    @Override
+    public List<Message> getStartupMessages() {
         return startupMessage;
     }
 
     /**
-     * 设置启动消息集合
+     * 设置启动消息集合(启动消息处理完毕后会置为null)
      */
-    public void setStartupMessage(List<Message> startupMessage) {
-        this.startupMessage = startupMessage;
+    @Override
+    public void setStartupMessage(List<Message> startupMessages) {
+        this.startupMessage = startupMessages;
     }
 
     /**
@@ -69,6 +51,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      *
      * @param handler 默认处理程序，用于处理由JavaScript发送的没有指定处理程序名称的消息(如果由JavaScript发送的消息指定了处理程序名称，则将由本地注册命名的处理程序处理)
      */
+    @Override
     public void setDefaultHandler(BridgeHandler handler) {
         this.defaultHandler = handler;
     }
@@ -79,23 +62,24 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
 
     public void loadUrl(String jsUrl, Map<String, String> additionalHttpHeaders, Callback returnCallback) {
         if (jsUrl.startsWith("file:") || additionalHttpHeaders == null) {
-            this.loadUrl(jsUrl);
+            mWebView.loadUrl(jsUrl);
         } else {
-            this.loadUrl(jsUrl, additionalHttpHeaders);
+            mWebView.loadUrl(jsUrl, additionalHttpHeaders);
         }
         if (returnCallback == null) {
             return;
         }
-        responseCallbacks.put(BridgeUtil.parseFunctionName(jsUrl), returnCallback);
+        responseCallbacks.put(JsBridgeHelper.parseFunctionName(jsUrl), returnCallback);
     }
 
     /**
-     * 批量注册处理程序，以供JavaScript调用
+     * 批量注册处理程序以供JavaScript调用并响应JavaScript发送的消息
      *
-     * @param handlerNames 方法名称数组
-     * @param handler      回调接口
+     * @param handlerNames 处理程序名称集合
+     * @param handler      处理程序(用于响应由JavaScript发送的指定处理程序名称的消息)
      */
-    public void registerHandler(ArrayList<String> handlerNames, JsHandler handler) {
+    @Override
+    public void registerHandler(Collection<String> handlerNames, JsHandler handler) {
         if (handler != null) {
             for (String handlerName : handlerNames) {
                 registerHandler(handlerName, handler);
@@ -104,11 +88,12 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
     }
 
     /**
-     * 注册处理程序，以供JavaScript调用
+     * 注册处理程序以供JavaScript调用并响应JavaScript发送的消息
      *
-     * @param handlerName 方法名称
-     * @param handler     回调接口
+     * @param handlerName 处理程序名称
+     * @param handler     处理程序(用于响应由JavaScript发送的指定处理程序名称的消息)
      */
+    @Override
     public void registerHandler(final String handlerName, final JsHandler handler) {
         registerHandler(handlerName, new BridgeHandler() {
             @Override
@@ -121,11 +106,12 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
     }
 
     /**
-     * 批量注册处理程序，以供JavaScript调用
+     * 注册处理程序以供JavaScript调用并响应JavaScript发送的消息
      *
-     * @param handlerNames 方法名称集合
-     * @param handler      处理程序
+     * @param handlerNames 处理程序名称集合
+     * @param handler      处理程序(用于处理由JavaScript发送的没有指定处理程序名称的消息)
      */
+    @Override
     public void registerHandler(Collection<String> handlerNames, BridgeHandler handler) {
         if (handlerNames != null && !handlerNames.isEmpty()) {
             for (String handlerName : handlerNames) {
@@ -135,11 +121,12 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
     }
 
     /**
-     * 注册处理程序，以供JavaScript调用
+     * 注册处理程序以供JavaScript调用并响应JavaScript发送的消息
      *
-     * @param handlerName 方法名称
-     * @param handler     处理程序
+     * @param handlerName 处理程序名称
+     * @param handler     处理程序(用于处理由JavaScript发送的没有指定处理程序名称的消息)
      */
+    @Override
     public void registerHandler(String handlerName, BridgeHandler handler) {
         if (handler != null) {
             messageHandlers.put(handlerName, handler);
@@ -150,8 +137,9 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      * 批量调用JavaScript注册的处理程序
      *
      * @param handlerInfos 方法名称与参数的Map(方法名称为key，参数为value)
-     * @param handler      回调接口
+     * @param handler      处理程序(用于处理由JavaScript响应的消息)
      */
+    @Override
     public void callHandler(Map<String, String> handlerInfos, JavaCallHandler handler) {
         if (handler != null) {
             for (Map.Entry<String, String> entry : handlerInfos.entrySet()) {
@@ -163,10 +151,11 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
     /**
      * 调用JavaScript注册的处理程序
      *
-     * @param handlerName 方法名称
-     * @param javaData    本地端传递给js端的参数，json字符串
-     * @param handler     回调接口
+     * @param handlerName 处理程序名称
+     * @param javaData    Native端传递给JS端的参数(JSON字符串)
+     * @param handler     处理程序(用于处理由JavaScript响应的消息)
      */
+    @Override
     public void callHandler(final String handlerName, String javaData, final JavaCallHandler handler) {
         callHandler(handlerName, javaData, new Callback() {
             @Override
@@ -181,9 +170,10 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
     /**
      * 批量调用JavaScript注册的处理程序
      *
-     * @param handlerInfos 方法名称与参数的Map(方法名称为key，参数为value)
-     * @param callback     回调接口
+     * @param handlerInfos 方法名称与参数的Map(处理程序名称为Key，参数为Value)
+     * @param callback     回调接口(用于处理由JavaScript响应的消息)
      */
+    @Override
     public void callHandler(Map<String, String> handlerInfos, Callback callback) {
         if (handlerInfos != null && !handlerInfos.isEmpty()) {
             Set<Map.Entry<String, String>> entrySet = handlerInfos.entrySet();
@@ -197,18 +187,30 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      * 调用JavaScript注册的处理程序
      *
      * @param handlerName 方法名称
-     * @param data        本地端传递给JavaScript端的参数(json字符串)
-     * @param callback    回调接口
+     * @param data        Native端传递给JS端的参数(JSON字符串)
+     * @param callback    回调接口(用于处理由JavaScript响应的消息)
      */
+    @Override
     public void callHandler(String handlerName, String data, Callback callback) {
         doSend(handlerName, data, callback);
     }
 
+    /**
+     * 向JavaScript发送消息
+     *
+     * @param data 消息内容
+     */
     @Override
     public void send(String data) {
         send(data, null);
     }
 
+    /**
+     * 向JavaScript发送消息
+     *
+     * @param data     消息内容
+     * @param callback 回调方法(用于处理由JavaScript响应的消息)
+     */
     @Override
     public void send(String data, Callback callback) {
         doSend(null, data, callback);
@@ -218,8 +220,8 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      * 发送消息
      *
      * @param handlerName 方法名称
-     * @param data        本地端传递给JavaScript端的参数
-     * @param callback    回调接口
+     * @param data        Native端传递给JS端的参数(JSON字符串)
+     * @param callback    回调接口(用于处理由JavaScript响应的消息)
      */
     private void doSend(String handlerName, String data, Callback callback) {
         Message message = new Message();
@@ -227,7 +229,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
             message.setData(data);
         }
         if (callback != null) {
-            String callbackId = getCallbackId();
+            String callbackId = JsBridgeHelper.generateCallbackId(++uniqueId);
             responseCallbacks.put(callbackId, callback);
             message.setCallbackId(callbackId);
         }
@@ -253,24 +255,26 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     void dispatchMessage(Message message) {
         String messageJson = message.toJson();
-        // 转义JSON字符串的特殊字符
-        messageJson = messageJson.replaceAll("(\\\\)([^utrn])", "\\\\\\\\$1$2");
-        messageJson = messageJson.replaceAll("(?<=[^\\\\])(\")", "\\\\\"");
-        String javascriptCommand = String.format(BridgeUtil.JS_HANDLE_MESSAGE_FROM_JAVA, messageJson);
+        if (!TextUtils.isEmpty(messageJson)) { // 判断Json字符串是否为空
+            // 转义JSON字符串的特殊字符
+            messageJson = messageJson.replaceAll("(\\\\)([^utrn])", "\\\\\\\\$1$2");
+            messageJson = messageJson.replaceAll("(?<=[^\\\\])(\")", "\\\\\"");
+        }
+        String javascriptCommand = String.format(JsBridgeHelper.JS_HANDLE_MESSAGE_FROM_JAVA, messageJson);
         if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
-            this.loadUrl(javascriptCommand);
+            mWebView.loadUrl(javascriptCommand);
         }
     }
 
     /**
      * 处理返回数据
      *
-     * @param url
+     * @param url Url
      */
     void handlerReturnData(String url) {
-        String functionName = BridgeUtil.getFunctionFromReturnUrl(url);
+        String functionName = JsBridgeHelper.getFunctionFromReturnUrl(url);
+        String data = JsBridgeHelper.getDataFromReturnUrl(url);
         Callback callback = responseCallbacks.get(functionName);
-        String data = BridgeUtil.getDataFromReturnUrl(url);
         if (callback != null) {
             callback.onCallback(data);
             responseCallbacks.remove(functionName);
@@ -282,7 +286,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     void flushMessageQueue() {
         if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
-            loadUrl(BridgeUtil.JS_FETCH_QUEUE_FROM_JAVA, new Callback() {
+            loadUrl(JsBridgeHelper.JS_FETCH_QUEUE_FROM_JAVA, new Callback() {
 
                 @Override
                 public void onCallback(String data) {
@@ -307,7 +311,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
     /**
      * 处理消息
      *
-     * @param message 消息
+     * @param message 消息对象
      */
     private void handleMessage(Message message) {
         if (message == null) {
@@ -315,13 +319,12 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
         }
         String responseId = message.getResponseId();
         if (!TextUtils.isEmpty(responseId)) { // 判断是否是response
-            Callback function = responseCallbacks.get(responseId);
+            Callback callback = responseCallbacks.get(responseId);
             String responseData = message.getResponseData();
-            function.onCallback(responseData);
+            callback.onCallback(responseData);
             responseCallbacks.remove(responseId);
         } else {
             Callback responseCallback;
-
             final String callbackId = message.getCallbackId();
             if (!TextUtils.isEmpty(callbackId)) {// 判断是否有callbackId
                 responseCallback = new Callback() {
@@ -350,7 +353,4 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
         }
     }
 
-    private String getCallbackId() {
-        return String.format(BridgeUtil.CALLBACK_ID_FORMAT, ++uniqueId + (BridgeUtil.UNDERLINE + SystemClock.currentThreadTimeMillis()));
-    }
 }

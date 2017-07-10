@@ -1,6 +1,7 @@
 package com.liyunlong.jsbridge.browse;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.webkit.WebView;
 
 import java.io.BufferedReader;
@@ -8,31 +9,43 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class BridgeUtil {
+/**
+ * JsBridge辅助类
+ *
+ * @author liyunlong
+ * @date 2017/7/10 10:41
+ */
+final class JsBridgeHelper {
 
-    static final String CUSTOM_PROTOCOL_SCHEME = "bridge://";
-    static final String CUSTOM_RETURN_DATA = CUSTOM_PROTOCOL_SCHEME + "return/";//格式为   bridge://return/{function}/returncontent
-    static final String CUSTOM_FETCH_QUEUE = CUSTOM_RETURN_DATA + "_fetchQueue/";
+    static final String JSBRIDGE_PROTOCOL_SCHEME = "bridge://";
+    static final String JSBRIDGE_RETURN_DATA = JSBRIDGE_PROTOCOL_SCHEME + "return/";//格式为 bridge://return/{function}/returnContent
+    static final String JSBRIDGE_FETCH_QUEUE = JSBRIDGE_RETURN_DATA + "_fetchQueue/";
     static final String TO_LOAD_JS = "WebViewJavascriptBridge.js";
-    static final String EMPTY = "";
-    static final String SPLIT_MARK = "/";
-    static final String UNDERLINE = "_";
-    static final String JAVASCRIPT = "javascript:";
-    static final String CALLBACK_ID_FORMAT = "JAVA_CALLBACK_%s";
     static final String JS_HANDLE_MESSAGE_FROM_JAVA = "javascript:WebViewJavascriptBridge._handleMessageFromNative('%s');";
     static final String JS_FETCH_QUEUE_FROM_JAVA = "javascript:WebViewJavascriptBridge._fetchQueue();";
+    private static final String EMPTY_CHAR = "";
+    private static final String SPLIT_MARK = "/";
+    private static final String UNDERLINE = "_";
+    private static final String JAVASCRIPT = "javascript:";
+    private static final String CALLBACK_ID_FORMAT = "JAVA_CALLBACK_%s";
 
-    public static String parseFunctionName(String jsUrl) {
+    /**
+     * 生产Callback的唯一标识
+     */
+    static String generateCallbackId(long uniqueId) {
+        return String.format(CALLBACK_ID_FORMAT, uniqueId + UNDERLINE + SystemClock.currentThreadTimeMillis());
+    }
+
+    static String parseFunctionName(String jsUrl) {
         return jsUrl.replace("javascript:WebViewJavascriptBridge.", "").replaceAll("\\(.*\\);", "");
     }
 
-    public static String getDataFromReturnUrl(String url) {
-        if (url.startsWith(CUSTOM_FETCH_QUEUE)) {
-            return url.replace(CUSTOM_FETCH_QUEUE, EMPTY);
+    static String getDataFromReturnUrl(String url) {
+        if (url.startsWith(JSBRIDGE_FETCH_QUEUE)) {
+            return url.replace(JSBRIDGE_FETCH_QUEUE, EMPTY_CHAR);
         }
-        String temp = url.replace(CUSTOM_RETURN_DATA, EMPTY);
+        String temp = url.replace(JSBRIDGE_RETURN_DATA, EMPTY_CHAR);
         String[] functionAndData = temp.split(SPLIT_MARK);
-
         if (functionAndData.length >= 2) {
             StringBuilder sb = new StringBuilder();
             for (int i = 1; i < functionAndData.length; i++) {
@@ -48,8 +61,8 @@ public class BridgeUtil {
      *
      * @param url Url
      */
-    public static String getFunctionFromReturnUrl(String url) {
-        String temp = url.replace(CUSTOM_RETURN_DATA, EMPTY);
+    static String getFunctionFromReturnUrl(String url) {
+        String temp = url.replace(JSBRIDGE_RETURN_DATA, EMPTY_CHAR);
         String[] functionAndData = temp.split(SPLIT_MARK);
         if (functionAndData.length >= 1) {
             return functionAndData[0];
@@ -74,11 +87,11 @@ public class BridgeUtil {
     /**
      * 注入本地Javascript
      *
-     * @param webView WebView对象
-     * @param path    Javascript文件路径
+     * @param webView       WebView对象
+     * @param assetFilePath Javascript文件路径
      */
-    public static void webViewLoadLocalJs(WebView webView, String path) {
-        String jsContent = assetFile2Str(webView.getContext(), path);
+    static void webViewLoadLocalJs(WebView webView, String assetFilePath) {
+        String jsContent = assetFile2Str(webView.getContext(), assetFilePath);
         webView.loadUrl(JAVASCRIPT + jsContent);
     }
 

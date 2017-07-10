@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 import com.liyunlong.jsbridge.browse.BridgeHandler;
 import com.liyunlong.jsbridge.browse.BridgeWebView;
 import com.liyunlong.jsbridge.browse.Callback;
+import com.liyunlong.jsbridge.browse.JavaCallHandler;
 import com.liyunlong.jsbridge.browse.JsHandler;
 
 import java.util.ArrayList;
@@ -92,15 +93,15 @@ public class SampleActivity extends Activity implements OnClickListener {
 
         User user = new User();
         Location location = new Location();
-        location.address = "SDU";
+        location.address = "WebViewJavascriptBridge";
         user.location = location;
-        user.name = "大头鬼";
+        user.name = "Java";
 
         // 调用JavaScript注册的处理程序
-        webView.callHandler("functionInJs", new Gson().toJson(user), new Callback() {
+        webView.callHandler("functionInJs", new Gson().toJson(user), new JavaCallHandler() {
             @Override
-            public void onCallback(String data) {
-                showToast(data);
+            public void onHandler(String handlerName, String jsResponseData) {
+                showToast(jsResponseData);
             }
         });
 
@@ -136,12 +137,7 @@ public class SampleActivity extends Activity implements OnClickListener {
                 });
                 break;
             case R.id.button2://发送消息给js
-                webView.send("Hello JS! 我是JAVA!", new Callback() {
-                    @Override
-                    public void onCallback(String data) {
-                        showToast(data);
-                    }
-                });
+                webView.send("Hello JS! 我是JAVA!");
                 break;
         }
     }
