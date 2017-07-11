@@ -184,13 +184,9 @@ Native通过WebViewJavascriptBridge调用H5的JS方法或者通知H5进行回调
 ```
 Native接收到Url后，可以按照这种格式将回调参数id、API名、参数提取出来，然后按如下步骤进行
     (1)根据API名，在本地找寻对应的API方法,并且记录该方法执行完后的回调函数id
-    (2)根据提取出来的参数，根据定义好的参数进行转化
-
-    如果是JSON格式需要手动转换，如果是String格式直接可以使用
+    (2)根据提取出来的参数，根据定义好的参数进行转化(如果是JSON格式需要手动转换，如果是String格式直接可以使用)
     (3)原生本地执行对应的API功能方法
-    (4)功能执行完毕后，找到这次API调用对应的回调函数id，然后连同需要传递的参数信息，组装成一个JSON格式的参数
-
-    回调的JSON格式为:{responseId:回调id,responseData:回调数据}
+    (4)功能执行完毕后，找到这次API调用对应的回调函数id，然后连同需要传递的参数信息，组装成一个JSON格式的参数,回调的JSON格式为:{responseId:回调id,responseData:回调数据}
         responseId String型 Web页面中对应需要执行的回调函数的id，在Web中生成url scheme时就已经产生
         responseData JSON型 Native需要传递给Web的回调数据，是一个JSON格式: {code:(整型,调用是否成功,1成功,0失败),result:具体需要传递的结果信息,可以为任意类型,msg:一些其它信息,如调用错误时的错误信息}
     (5)通过JSBridge通知Web页面回调
