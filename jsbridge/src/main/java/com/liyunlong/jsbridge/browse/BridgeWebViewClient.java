@@ -32,8 +32,8 @@ public class BridgeWebViewClient extends WebViewClient {
         if (view instanceof BridgeWebView) {
             BridgeWebView bridgeWebView = (BridgeWebView) view;
             BridgeWebViewHelper helper = bridgeWebView.getBridgeWebViewHelper(); // BridgeWebView辅助类
-            if (url.startsWith(JsBridgeHelper.JSBRIDGE_RETURN_DATA)) { // 如果是返回数据
-                helper.handlerReturnData(url);
+            if (url.startsWith(JsBridgeHelper.JSBRIDGE_RETURN_DATA)) { // 判断是否是返回数据
+                helper.handlerReturnData(url); // 处理返回数据
                 return true;
             } else if (url.startsWith(JsBridgeHelper.JSBRIDGE_PROTOCOL_SCHEME)) { // 刷新消息队列
                 helper.flushMessageQueue();
