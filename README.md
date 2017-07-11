@@ -194,9 +194,9 @@ Native接收到Url后，可以按照这种格式将回调参数id、API名、参
         responseId String型 Web页面中对应需要执行的回调函数的id，在Web中生成url scheme时就已经产生
         responseData JSON型 Native需要传递给Web的回调数据，是一个JSON格式: {code:(整型,调用是否成功,1成功,0失败),result:具体需要传递的结果信息,可以为任意类型,msg:一些其它信息,如调用错误时的错误信息}
     (5)通过JSBridge通知Web页面回调
-    ```java
-        JSBridge._handleMessageFromNative(messageJSON);	// 将回调信息传给Web
-    ```
+```java
+        JSBridge._handleMessageFromNative(messageJSON);	// 将回调信息传给H5
+```
 
 
 
