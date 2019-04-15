@@ -6,8 +6,10 @@
         return;
     }
 
-    // 进行url scheme传值的iframe
+    // 消息index队列 iframe
     var messagingIframe;
+    // 消息体队列 iframe
+    var bizMessagingIframe;
     // 发送消息队列
     var sendMessageQueue = [];
     // 接收消息队列
@@ -26,11 +28,17 @@
     // 唯一ID，用来确保每一个回调函数的唯一性
     var uniqueId = 1;
 
+    // 创建消息index队列 iframe
     function _createQueueReadyIframe(doc) {
-        // 创建隐藏iframe过程
         messagingIframe = doc.createElement('iframe');
         messagingIframe.style.display = 'none';
         doc.documentElement.appendChild(messagingIframe);
+    }
+    // 创建消息体队列 iframe
+    function _createQueueReadyIframe4biz(doc) {
+        bizMessagingIframe = doc.createElement('iframe');
+        bizMessagingIframe.style.display = 'none';
+        doc.documentElement.appendChild(bizMessagingIframe);
     }
 
     // set default messageHandler
@@ -86,7 +94,9 @@
         // android can't read directly the return data, so we can reload iframe src to communicate with java
         // 将js传递的参数拼接入Url中，传递到native，而相应的shouldOverrideUrlLoading()中调用handlerReturnData()这个方法
         // 注意：正常来说是可以通过window.location.href达到发起网络请求的效果的，但是有一个很严重的问题，就是如果连续多次修改window.location.href的值，在Native层只能接收到最后一次请求，前面的请求都会被忽略掉。所以JS端发起网络请求的时候，需要使用iframe，这样就可以避免这个问题。
-        messagingIframe.src = JSBRIDGE_FETCH_QUEUE + encodeURIComponent(messageQueueString);
+        if (messageQueueString !== '[]') {
+            bizMessagingIframe.src = JSBRIDGE_FETCH_QUEUE + encodeURIComponent(messageQueueString);
+        }
     }
 
     // 提供给native使用
@@ -115,6 +125,7 @@
                         });
                     };
                 }
+
                 var handler = WebViewJavascriptBridge._messageHandler;
                 if (message.handlerName) {
                     // 通过队列拿到handler
@@ -154,6 +165,7 @@
 
     var doc = document;
     _createQueueReadyIframe(doc);
+    _createQueueReadyIframe4biz(doc);
     var readyEvent = doc.createEvent('Events');
     readyEvent.initEvent('WebViewJavascriptBridgeReady');
     readyEvent.bridge = WebViewJavascriptBridge;

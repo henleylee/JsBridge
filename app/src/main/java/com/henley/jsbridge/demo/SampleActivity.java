@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,11 +13,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.henley.jsbridge.browse.BridgeHandler;
-import com.henley.jsbridge.browse.BridgeWebView;
-import com.henley.jsbridge.browse.Callback;
-import com.henley.jsbridge.browse.JavaCallHandler;
-import com.henley.jsbridge.browse.JsHandler;
+import com.henley.jsbridge.BridgeHandler;
+import com.henley.jsbridge.BridgeWebView;
+import com.henley.jsbridge.Callback;
+import com.henley.jsbridge.JavaCallHandler;
+import com.henley.jsbridge.JsHandler;
 
 import java.util.ArrayList;
 
@@ -52,7 +53,7 @@ public class SampleActivity extends Activity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sample);
-        webView = (BridgeWebView) findViewById(R.id.webView);
+        webView = findViewById(R.id.webView);
         findViewById(R.id.button1).setOnClickListener(this);
         findViewById(R.id.button2).setOnClickListener(this);
 
@@ -93,9 +94,9 @@ public class SampleActivity extends Activity implements OnClickListener {
 
         User user = new User();
         Location location = new Location();
-        location.address = "WebViewJavascriptBridge";
-        user.location = location;
         user.name = "Java";
+        user.location = location;
+        location.address = "WebViewJavascriptBridge";
 
         // 调用JavaScript注册的处理程序
         webView.callHandler("functionInJs", new Gson().toJson(user), new JavaCallHandler() {
@@ -109,8 +110,8 @@ public class SampleActivity extends Activity implements OnClickListener {
     }
 
     public void pickFile() {
-        Intent chooserIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        chooserIntent.setType("image/*");
+        Intent chooserIntent = new Intent(Intent.ACTION_PICK);
+        chooserIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
         startActivityForResult(chooserIntent, RESULT_CODE);
     }
 
@@ -118,8 +119,8 @@ public class SampleActivity extends Activity implements OnClickListener {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == RESULT_CODE) {
             if (intent != null) {
-                String uriStr = intent.getData().toString();
-                mfunction.onCallback(uriStr);
+                String uri = intent.getData().toString();
+                mfunction.onCallback(uri);
             }
         }
     }

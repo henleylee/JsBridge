@@ -1,4 +1,4 @@
-package com.henley.jsbridge.browse;
+package com.henley.jsbridge;
 
 /**
  * 回调接口

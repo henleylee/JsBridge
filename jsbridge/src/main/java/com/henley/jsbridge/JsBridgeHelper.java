@@ -1,13 +1,16 @@
-package com.henley.jsbridge.browse;
+package com.henley.jsbridge;
 
 import android.content.Context;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.webkit.WebView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 /**
  * JsBridge辅助类
@@ -30,27 +33,12 @@ final class JsBridgeHelper {
     private static final String CALLBACK_ID_FORMAT = "JAVA_CALLBACK_%s";
 
     /**
-     * 生产Callback的唯一标识
-     */
-    static String generateCallbackId(long uniqueId) {
-        return String.format(CALLBACK_ID_FORMAT, uniqueId + UNDERLINE + SystemClock.currentThreadTimeMillis());
-    }
-
-    /**
-     * 从JS返回的Url中获取函数名
-     *
-     * @param jsUrl Url
-     */
-    static String parseFunctionName(String jsUrl) {
-        return jsUrl.replace("javascript:WebViewJavascriptBridge.", "").replaceAll("\\(.*\\);", "");
-    }
-
-    /**
      * 从JS返回的Url中获取Data
      *
      * @param jsUrl Url
      */
     static String getDataFromReturnUrl(String jsUrl) {
+        // url = bridge://return/_fetchQueue/message
         if (jsUrl.startsWith(JSBRIDGE_FETCH_QUEUE)) {
             return jsUrl.replace(JSBRIDGE_FETCH_QUEUE, EMPTY_CHAR);
         }
@@ -142,4 +130,32 @@ final class JsBridgeHelper {
         }
         return null;
     }
+
+    /**
+     * 生产Callback的唯一标识
+     */
+    static String generateCallbackId(long uniqueId) {
+        return String.format(CALLBACK_ID_FORMAT, uniqueId + UNDERLINE + SystemClock.currentThreadTimeMillis());
+    }
+
+    /**
+     * 从JS返回的Url中获取函数名
+     *
+     * @param jsUrl Url
+     */
+    static String parseFunctionName(String jsUrl) {
+        return jsUrl.replace("javascript:WebViewJavascriptBridge.", "").replaceAll("\\(.*\\);", "");
+    }
+
+    static String decode(String content) {
+        if (TextUtils.isEmpty(content)) {
+            return "";
+        }
+        try {
+            return URLDecoder.decode(content, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return URLDecoder.decode(content);
+        }
+    }
+
 }

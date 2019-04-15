@@ -18,7 +18,7 @@
         android:text="@string/button_name_2" />
 
     <!-- webview 演示web调用Java -->
-    <com.henley.jsbridge.browse.BridgeWebView
+    <com.henley.jsbridge.BridgeWebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

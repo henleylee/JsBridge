@@ -1,4 +1,4 @@
-package com.henley.jsbridge.browse;
+package com.henley.jsbridge;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,11 +21,11 @@ final class Message {
     private final static String HANDLER_NAME = "handlerName";
     private final static String RESPONSE_DATA = "responseData";
 
-    private String data; //data of message
-    private String callbackId; //callbackId
-    private String responseId; //responseId
-    private String handlerName; //name of handler
-    private String responseData; //responseData
+    private String data;            // data of message
+    private String callbackId;      // callbackId
+    private String responseId;      // responseId
+    private String handlerName;     // name of handler
+    private String responseData;    // responseData
 
     public String getData() {
         return data;

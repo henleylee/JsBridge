@@ -1,4 +1,4 @@
-package com.henley.jsbridge.browse;
+package com.henley.jsbridge;
 
 /**
  * 处理程序(用于响应由JavaScript发送的指定处理程序名称的消息)

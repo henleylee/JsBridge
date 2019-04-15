@@ -1,4 +1,4 @@
-package com.henley.jsbridge.browse;
+package com.henley.jsbridge;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -18,8 +18,7 @@ import java.util.Map;
  */
 public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
 
-    private static final String TAG = "BridgeWebView";
-    private BridgeWebViewHelper bridgeWebViewHelper;
+    private BridgeWebViewHelper bridgeHelper;
 
     public BridgeWebView(Context context) {
         this(context, null);
@@ -32,7 +31,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
     public BridgeWebView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         initWebView();
-        bridgeWebViewHelper = new BridgeWebViewHelper(this);
+        bridgeHelper = new BridgeWebViewHelper(this);
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -46,8 +45,8 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
         this.setWebViewClient(new BridgeWebViewClient());
     }
 
-    public BridgeWebViewHelper getBridgeWebViewHelper() {
-        return bridgeWebViewHelper;
+    public BridgeWebViewHelper getBridgeHelper() {
+        return bridgeHelper;
     }
 
     /**
@@ -55,7 +54,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     @Override
     public List<Message> getStartupMessages() {
-        return bridgeWebViewHelper.getStartupMessages();
+        return bridgeHelper.getStartupMessages();
     }
 
     /**
@@ -63,7 +62,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     @Override
     public void setStartupMessage(List<Message> startupMessages) {
-        bridgeWebViewHelper.setStartupMessage(startupMessages);
+        bridgeHelper.setStartupMessage(startupMessages);
     }
 
     /**
@@ -73,15 +72,15 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     @Override
     public void setDefaultHandler(BridgeHandler handler) {
-        bridgeWebViewHelper.setDefaultHandler(handler);
+        bridgeHelper.setDefaultHandler(handler);
     }
 
     public void loadUrl(String jsUrl, Callback returnCallback) {
-        bridgeWebViewHelper.loadUrl(jsUrl, returnCallback);
+        bridgeHelper.loadUrl(jsUrl, returnCallback);
     }
 
     public void loadUrl(String jsUrl, Map<String, String> additionalHttpHeaders, Callback returnCallback) {
-        bridgeWebViewHelper.loadUrl(jsUrl, additionalHttpHeaders, returnCallback);
+        bridgeHelper.loadUrl(jsUrl, additionalHttpHeaders, returnCallback);
     }
 
     /**
@@ -92,7 +91,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     @Override
     public void registerHandler(Collection<String> handlerNames, JsHandler handler) {
-        bridgeWebViewHelper.registerHandler(handlerNames, handler);
+        bridgeHelper.registerHandler(handlerNames, handler);
     }
 
     /**
@@ -103,7 +102,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     @Override
     public void registerHandler(final String handlerName, final JsHandler handler) {
-        bridgeWebViewHelper.registerHandler(handlerName, handler);
+        bridgeHelper.registerHandler(handlerName, handler);
     }
 
     /**
@@ -114,7 +113,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     @Override
     public void registerHandler(Collection<String> handlerNames, BridgeHandler handler) {
-        bridgeWebViewHelper.registerHandler(handlerNames, handler);
+        bridgeHelper.registerHandler(handlerNames, handler);
     }
 
     /**
@@ -125,7 +124,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     @Override
     public void registerHandler(String handlerName, BridgeHandler handler) {
-        bridgeWebViewHelper.registerHandler(handlerName, handler);
+        bridgeHelper.registerHandler(handlerName, handler);
     }
 
     /**
@@ -136,7 +135,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     @Override
     public void callHandler(Map<String, String> handlerInfos, JavaCallHandler handler) {
-        bridgeWebViewHelper.callHandler(handlerInfos, handler);
+        bridgeHelper.callHandler(handlerInfos, handler);
     }
 
     /**
@@ -148,7 +147,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     @Override
     public void callHandler(final String handlerName, String javaData, final JavaCallHandler handler) {
-        bridgeWebViewHelper.callHandler(handlerName, javaData, handler);
+        bridgeHelper.callHandler(handlerName, javaData, handler);
     }
 
     /**
@@ -159,7 +158,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     @Override
     public void callHandler(Map<String, String> handlerInfos, Callback callback) {
-        bridgeWebViewHelper.callHandler(handlerInfos, callback);
+        bridgeHelper.callHandler(handlerInfos, callback);
     }
 
     /**
@@ -171,7 +170,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     @Override
     public void callHandler(String handlerName, String data, Callback callback) {
-        bridgeWebViewHelper.callHandler(handlerName, data, callback);
+        bridgeHelper.callHandler(handlerName, data, callback);
     }
 
     /**
@@ -181,7 +180,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     @Override
     public void send(String data) {
-        bridgeWebViewHelper.send(data);
+        bridgeHelper.send(data);
     }
 
     /**
@@ -192,7 +191,7 @@ public class BridgeWebView extends WebView implements WebViewJavascriptBridge {
      */
     @Override
     public void send(String data, Callback callback) {
-        bridgeWebViewHelper.send(data, callback);
+        bridgeHelper.send(data, callback);
     }
 
 }

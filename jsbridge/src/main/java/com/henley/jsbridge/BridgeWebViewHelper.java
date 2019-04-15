@@ -1,9 +1,10 @@
-package com.henley.jsbridge.browse;
+package com.henley.jsbridge;
 
 import android.os.Looper;
 import android.text.TextUtils;
 import android.webkit.WebView;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -240,7 +241,7 @@ public final class BridgeWebViewHelper implements WebViewJavascriptBridge {
     }
 
     /**
-     * 将消息添加到启动消息集合或直接处理
+     * 将消息添加到启动消息集合或直接分发处理
      */
     private void queueMessage(Message message) {
         if (startupMessage != null) { // 判断启动消息集合是否为空
@@ -251,18 +252,24 @@ public final class BridgeWebViewHelper implements WebViewJavascriptBridge {
     }
 
     /**
-     * 处理消息
+     * 分发处理消息
      */
     void dispatchMessage(Message message) {
         String messageJson = message.toJson();
-        if (!TextUtils.isEmpty(messageJson)) { // 判断Json字符串是否为空
-            // 转义JSON字符串的特殊字符
-            messageJson = messageJson.replaceAll("(\\\\)([^utrn])", "\\\\\\\\$1$2");
-            messageJson = messageJson.replaceAll("(?<=[^\\\\])(\")", "\\\\\"");
+        if (messageJson != null && !TextUtils.isEmpty(messageJson)) { // 判断Json字符串是否为空
+            // 转义 json 字符串的特殊字符
+            messageJson = messageJson
+                    .replaceAll("(\\\\)([^utrn])", "\\\\\\\\$1$2")
+                    .replaceAll("(?<=[^\\\\])(\")", "\\\\\"")
+                    .replaceAll("(?<=[^\\\\])(\')", "\\\\\'")
+                    .replaceAll("%7B", URLEncoder.encode("%7B"))
+                    .replaceAll("%7D", URLEncoder.encode("%7D"))
+                    .replaceAll("%22", URLEncoder.encode("%22"));
         }
-        String javascriptCommand = String.format(JsBridgeHelper.JS_HANDLE_MESSAGE_FROM_JAVA, messageJson);
+        final String javascriptCommand = String.format(JsBridgeHelper.JS_HANDLE_MESSAGE_FROM_JAVA, messageJson);
+        // 调用WebViewJavascriptBridge._handleMessageFromNative(messageJson)这个JS方法(必须在主线程执行该方法)
         if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
-            mWebView.loadUrl(javascriptCommand); // 调用WebViewJavascriptBridge._handleMessageFromNative(messageJson)这个JS方法
+            mWebView.loadUrl(javascriptCommand);
         }
     }
 
@@ -271,11 +278,11 @@ public final class BridgeWebViewHelper implements WebViewJavascriptBridge {
      *
      * @param url Url
      */
-    void handlerReturnData(String url) {
+    void handleReturnData(String url) {
         String functionName = JsBridgeHelper.getFunctionFromReturnUrl(url);
-        String data = JsBridgeHelper.getDataFromReturnUrl(url);
         Callback callback = responseCallbacks.get(functionName);
         if (callback != null) {
+            String data = JsBridgeHelper.getDataFromReturnUrl(url);
             callback.onCallback(data);
             responseCallbacks.remove(functionName);
         }
@@ -295,9 +302,11 @@ public final class BridgeWebViewHelper implements WebViewJavascriptBridge {
                         List<Message> list = Message.toArrayList(data);
                         if (list != null && !list.isEmpty()) {
                             // 循环遍历处理消息
-                            for (int i = 0; i < list.size(); i++) {
-                                Message message = list.get(i);
-                                handleMessage(message);
+                            for (int index = 0; index < list.size(); index++) {
+                                Message message = list.get(index);
+                                if (message != null) {
+                                    handleMessage(message);
+                                }
                             }
                         }
                     } catch (Exception e) {
@@ -318,15 +327,17 @@ public final class BridgeWebViewHelper implements WebViewJavascriptBridge {
             return;
         }
         String responseId = message.getResponseId();
-        if (!TextUtils.isEmpty(responseId)) { // 判断是否是response
+        if (!TextUtils.isEmpty(responseId)) {           // 判断是否有 responseId
             Callback callback = responseCallbacks.get(responseId);
-            String responseData = message.getResponseData();
-            callback.onCallback(responseData);
+            if (callback != null) {
+                String responseData = message.getResponseData();
+                callback.onCallback(responseData);
+            }
             responseCallbacks.remove(responseId);
         } else {
             Callback responseCallback;
             final String callbackId = message.getCallbackId();
-            if (!TextUtils.isEmpty(callbackId)) {// 判断是否有callbackId
+            if (!TextUtils.isEmpty(callbackId)) {       // 判断是否有 callbackId
                 responseCallback = new Callback() {
                     @Override
                     public void onCallback(String data) {
@@ -347,8 +358,7 @@ public final class BridgeWebViewHelper implements WebViewJavascriptBridge {
                 handler = defaultHandler;
             }
             if (handler != null) {
-                String data = message.getData();
-                handler.handler(data, responseCallback);
+                handler.handler(message.getData(), responseCallback);
             }
         }
     }

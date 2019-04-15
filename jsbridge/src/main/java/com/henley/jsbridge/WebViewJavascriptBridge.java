@@ -1,4 +1,4 @@
-package com.henley.jsbridge.browse;
+package com.henley.jsbridge;
 
 import java.util.Collection;
 import java.util.List;
@@ -110,4 +110,5 @@ interface WebViewJavascriptBridge {
      * @param callback 回调方法(用于处理由JavaScript响应的消息)
      */
     void send(String data, Callback callback);
+
 }

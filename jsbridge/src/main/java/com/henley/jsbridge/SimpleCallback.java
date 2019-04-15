@@ -1,4 +1,4 @@
-package com.henley.jsbridge.browse;
+package com.henley.jsbridge;
 
 
 /**
@@ -13,4 +13,5 @@ class SimpleCallback implements Callback {
     public void onCallback(String data) {
 
     }
+
 }
