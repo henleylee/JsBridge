@@ -1,4 +1,4 @@
-package com.liyunlong.jsbridge.browse;
+package com.henley.jsbridge.browse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * JsBridge消息对象
  *
- * @author liyunlong
+ * @author Henley
  * @date 2017/7/10 11:16
  */
 final class Message {

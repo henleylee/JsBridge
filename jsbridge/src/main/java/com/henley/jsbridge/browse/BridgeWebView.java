@@ -1,4 +1,4 @@
-package com.liyunlong.jsbridge.browse;
+package com.henley.jsbridge.browse;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Bridge辅助类
  *
- * @author liyunlong
+ * @author Henley
  * @date 2017/7/10 11:26
  */
 public class BridgeWebView extends WebView implements WebViewJavascriptBridge {

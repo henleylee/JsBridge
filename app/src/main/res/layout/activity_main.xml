@@ -4,11 +4,11 @@
     android:layout_height="match_parent">
 
 
-    <com.liyunlong.jsbridge.view.ProgressBarWebView
+    <com.henley.jsbridge.view.ProgressBarWebView
         android:id="@+id/login_progress_webview"
         style="@style/NumberProgressBar_Default"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </com.liyunlong.jsbridge.view.ProgressBarWebView>
+    </com.henley.jsbridge.view.ProgressBarWebView>
 </RelativeLayout>

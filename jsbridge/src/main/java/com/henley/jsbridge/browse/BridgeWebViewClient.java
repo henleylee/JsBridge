@@ -1,4 +1,4 @@
-package com.liyunlong.jsbridge.browse;
+package com.henley.jsbridge.browse;
 
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * BridgeWebViewClient
  *
- * @author liyunlong
+ * @author Henley
  * @date 2017/7/10 10:41
  */
 public class BridgeWebViewClient extends WebViewClient {

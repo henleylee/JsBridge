@@ -1,4 +1,4 @@
-package com.liyunlong.jsbridge.view;
+package com.henley.jsbridge.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -11,12 +11,12 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.liyunlong.jsbridge.R;
+import com.henley.jsbridge.R;
 
 /**
  * 进度条
  *
- * @author liyunlong
+ * @author Henley
  * @date 2017/7/10 11:32
  */
 public class NumberProgressBar extends View {

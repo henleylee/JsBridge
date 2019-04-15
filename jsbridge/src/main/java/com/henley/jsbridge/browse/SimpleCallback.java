@@ -1,10 +1,10 @@
-package com.liyunlong.jsbridge.browse;
+package com.henley.jsbridge.browse;
 
 
 /**
  * Callback的空实现
  *
- * @author liyunlong
+ * @author Henley
  * @date 2017/3/16 17:39
  */
 class SimpleCallback implements Callback {

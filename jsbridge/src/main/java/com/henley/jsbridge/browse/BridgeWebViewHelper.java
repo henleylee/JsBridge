@@ -1,4 +1,4 @@
-package com.liyunlong.jsbridge.browse;
+package com.henley.jsbridge.browse;
 
 import android.os.Looper;
 import android.text.TextUtils;
@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * BridgeWebView辅助类
  *
- * @author liyunlong
+ * @author Henley
  * @date 2017/7/10 11:53
  */
 public final class BridgeWebViewHelper implements WebViewJavascriptBridge {

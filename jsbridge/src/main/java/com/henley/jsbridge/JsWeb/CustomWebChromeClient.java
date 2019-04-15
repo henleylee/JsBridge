@@ -1,15 +1,15 @@
-package com.liyunlong.jsbridge.JsWeb;
+package com.henley.jsbridge.JsWeb;
 
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
-import com.liyunlong.jsbridge.view.NumberProgressBar;
+import com.henley.jsbridge.view.NumberProgressBar;
 
 /**
  * 带进度条的ChromeClient
  *
- * @author liyunlong
+ * @author Henley
  * @date 2017/7/10 10:39
  */
 public class CustomWebChromeClient extends WebChromeClient {

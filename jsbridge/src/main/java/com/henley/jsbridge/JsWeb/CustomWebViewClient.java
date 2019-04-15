@@ -1,14 +1,14 @@
-package com.liyunlong.jsbridge.JsWeb;
+package com.henley.jsbridge.JsWeb;
 
 import android.support.annotation.NonNull;
 import android.webkit.WebView;
 
-import com.liyunlong.jsbridge.browse.BridgeWebViewClient;
+import com.henley.jsbridge.browse.BridgeWebViewClient;
 
 import java.util.Map;
 
 /**
- * @author liyunlong
+ * @author Henley
  * @date 2017/7/10 10:42
  */
 public abstract class CustomWebViewClient extends BridgeWebViewClient {

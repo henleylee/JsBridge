@@ -1,4 +1,4 @@
-package com.liyunlong.jsbridge.browse;
+package com.henley.jsbridge.browse;
 
 import android.content.Context;
 import android.os.SystemClock;
@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 /**
  * JsBridge辅助类
  *
- * @author liyunlong
+ * @author Henley
  * @date 2017/7/10 10:41
  */
 final class JsBridgeHelper {

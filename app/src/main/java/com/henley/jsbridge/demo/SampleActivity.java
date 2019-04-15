@@ -1,4 +1,4 @@
-package com.liyunlong.jsbridge.demo;
+package com.henley.jsbridge.demo;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,11 +12,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.liyunlong.jsbridge.browse.BridgeHandler;
-import com.liyunlong.jsbridge.browse.BridgeWebView;
-import com.liyunlong.jsbridge.browse.Callback;
-import com.liyunlong.jsbridge.browse.JavaCallHandler;
-import com.liyunlong.jsbridge.browse.JsHandler;
+import com.henley.jsbridge.browse.BridgeHandler;
+import com.henley.jsbridge.browse.BridgeWebView;
+import com.henley.jsbridge.browse.Callback;
+import com.henley.jsbridge.browse.JavaCallHandler;
+import com.henley.jsbridge.browse.JsHandler;
 
 import java.util.ArrayList;
 

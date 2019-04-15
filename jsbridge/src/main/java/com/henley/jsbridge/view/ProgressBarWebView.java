@@ -1,4 +1,4 @@
-package com.liyunlong.jsbridge.view;
+package com.henley.jsbridge.view;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -11,13 +11,13 @@ import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.widget.LinearLayout;
 
-import com.liyunlong.jsbridge.JsWeb.CustomWebChromeClient;
-import com.liyunlong.jsbridge.JsWeb.CustomWebViewClient;
-import com.liyunlong.jsbridge.browse.BridgeHandler;
-import com.liyunlong.jsbridge.browse.BridgeWebView;
-import com.liyunlong.jsbridge.browse.Callback;
-import com.liyunlong.jsbridge.browse.JavaCallHandler;
-import com.liyunlong.jsbridge.browse.JsHandler;
+import com.henley.jsbridge.JsWeb.CustomWebChromeClient;
+import com.henley.jsbridge.JsWeb.CustomWebViewClient;
+import com.henley.jsbridge.browse.BridgeHandler;
+import com.henley.jsbridge.browse.BridgeWebView;
+import com.henley.jsbridge.browse.Callback;
+import com.henley.jsbridge.browse.JavaCallHandler;
+import com.henley.jsbridge.browse.JsHandler;
 
 import java.util.Collection;
 import java.util.Map;
@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * 带有进度条的BridgeWebView
  *
- * @author liyunlong
+ * @author Henley
  * @date 2017/7/10 11:35
  */
 public class ProgressBarWebView extends LinearLayout {
