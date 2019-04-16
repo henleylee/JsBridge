@@ -1,7 +1,7 @@
 # JsBridge-master —— Web与Native交互
 JSBridge 利用 WebViewJavascriptBridge 实现 Javascript 和 Native 的交互。
 
-下载 [JSBridge](./JsBridge-v1.0.apk)
+下载 [JSBridge](./JsBridge-v1.0.0.apk)
 
 ## 1. 背景 ##
 首先介绍一下采用 WebView 开发和采用原生开发的客户端的优缺点。
@@ -200,6 +200,3 @@ Native 接收到 Url 后，可以按照这种格式将回调参数 id、API 名�
 ```java
         JSBridge._handleMessageFromNative(messageJSON);	// 将回调信息传给H5
 ```
-
-
-
