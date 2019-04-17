@@ -24,3 +24,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "com.android.support:support-annotations:$supportVersion"
 }
+
+
+apply from: '../gradle/bintray.gradle'
