@@ -1,8 +1,6 @@
 # JsBridge-master —— Web与Native交互
 JSBridge 利用 WebViewJavascriptBridge 实现 Javascript 和 Native 的交互。
 
-下载 [JSBridge](./JsBridge-v1.0.0.apk)
-
 ## 1. 背景 ##
 首先介绍一下采用 WebView 开发和采用原生开发的客户端的优缺点。
 #### 1.1 使用 WebView： ####
@@ -17,8 +15,20 @@ JSBridge 利用 WebViewJavascriptBridge 实现 Javascript 和 Native 的交互�
 JSBridge 是 Native 代码与 JS 代码的通信桥梁。目前的一种统一方案是:**H5 触发 url scheme->Native 捕获 url scheme -> 原生分析执行 -> 原生调用 H5**。如下图
 ![](./screenshots/JSBridge原理.png)
 
-## 3. 准备工作 ##
-#### 3.1 传送的消息结构见 Message 类： ####
+## 3. Download ##
+### Gradle ###
+```gradle
+dependencies {
+    implementation 'com.henley.jsbridge:jsbridge:1.0.0'
+}
+```
+
+### APK Demo ###
+
+下载 [JSBridge](./JsBridge-v1.0.0.apk)
+
+## 4. 准备工作 ##
+#### 4.1 传送的消息结构见 Message 类： ####
 ```java
     private String data;            //data of message
     private String callbackId;      //callbackId
@@ -27,7 +37,7 @@ JSBridge 是 Native 代码与 JS 代码的通信桥梁。目前的一种统一�
     private String responseData;    //responseData
 ```
 
-#### 3.2 工具类：JsBridgeHelper： ####
+#### 4.2 工具类：JsBridgeHelper： ####
 从 JS 返回的 Url 中获取函数名
 ```java
     static String parseFunctionName(String jsUrl)
@@ -61,8 +71,8 @@ JSBridge 是 Native 代码与 JS 代码的通信桥梁。目前的一种统一�
 ```java
     static void assetFile2Str(Context context, String fileName)
 ```
-## 4. 初始化 ##
-#### 4.1 Native 端的初始化： ####
+## 5. 初始化 ##
+#### 5.1 Native 端的初始化： ####
 #### 设置默认处理程序，用于处理由 JavaScript 发送的没有指定处理程序名称的消息： ####
 ```java
     webView.setDefaultHandler(new BridgeHandler() {
@@ -109,7 +119,7 @@ JSBridge 是 Native 代码与 JS 代码的通信桥梁。目前的一种统一�
     });
 ```
 
-#### 4.2 Web 端的初始化： ####
+#### 5.2 Web 端的初始化： ####
 #### 初始化函数，注册处理程序，以供 Native 调用(第一次连接时调用)： ####
 ```java
     connectWebViewJavascriptBridge(function(bridge) {
@@ -136,7 +146,7 @@ JSBridge 是 Native 代码与 JS 代码的通信桥梁。目前的一种统一�
     );
 ```
 
-## 5. Native 调用 Javascript ##
+## 6. Native 调用 Javascript ##
 原理：是通过 WebView 的 `webview.loadUrl("javascript:WebViewJavascriptBridge._handleMessageFromNative('%s');" )` 调用时序图如下图：
 ![](./screenshots/Native调用Javascript.png)
 
@@ -154,7 +164,7 @@ Native 通过 `WebViewJavascriptBridge` 调用 H5 的 JS 方法或者通知 H5 �
  - Native 通知 H5 页面进行回调
  - Native 主动调用 H5 方法
 
-## 6. Javascript 调用 Native ##
+## 7. Javascript 调用 Native ##
 原理：是通过 `WebViewJavascriptBridge` 的 `callHandler(handlerName, data, responseCallback)` 方法来调用原生 API，调用时序图如下图：
 ![](./screenshots/Javascript调用Native.png)
 
@@ -167,7 +177,7 @@ Native 通过 `WebViewJavascriptBridge` 调用 H5 的 JS 方法或者通知 H5 �
   4. 原生捕获到这个 scheme 后会进行分析，而相应的 `shouldOverrideUrlLoading()` 中调用 `handlerReturnData()` 这个方法
   注意：正常来说是可以通过 `window.location.href` 达到发起网络请求的效果的，但是有一个很严重的问题，就是如果我们连续多次修改 `window.location.href` 的值，在 Native 层只能接收到最后一次请求，前面的请求都会被忽略掉。所以JS端发起网络请求的时候，需要使用 iframe，这样就可以避免这个问题。
 
-## 7. Native 如何得知 API 被调用 ##
+## 8. Native 如何得知 API 被调用 ##
 在 Android 中(WebViewClient 里)，通过 `shouldoverrideurlloading()` 方法可以捕获到 url scheme 的触发
 ```java
     public boolean shouldOverrideUrlLoading(WebView view, String url){
@@ -179,7 +189,7 @@ Native 通过 `WebViewJavascriptBridge` 调用 H5 的 JS 方法或者通知 H5 �
 ```
 另外，Android 中也可以不通过 `iframe.src` 来触发 scheme，Android 中可以通过 `window.prompt(uri, "");` 来触发 scheme，然后 Native 中通过重写 `WebViewClient` 的 `onJsPrompt()` 来获取 Uri。
 
-## 8. 分析 Url-参数和回调的格式 ##
+## 9. 分析 Url-参数和回调的格式 ##
 ```java
     if (url.startsWith(JsBridgeHelper.JSBRIDGE_RETURN_DATA)) { // 判断是否是返回数据
         helper.handlerReturnData(url); // 处理返回数据
@@ -200,3 +210,4 @@ Native 接收到 Url 后，可以按照这种格式将回调参数 id、API 名�
 ```java
         JSBridge._handleMessageFromNative(messageJSON);	// 将回调信息传给H5
 ```
+
