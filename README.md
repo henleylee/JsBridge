@@ -19,7 +19,7 @@ JSBridge 是 Native 代码与 JS 代码的通信桥梁。目前的一种统一�
 ### Gradle ###
 ```gradle
 dependencies {
-    implementation 'com.henley.jsbridge:jsbridge:1.0.0'
+    implementation 'com.henley.android:jsbridge:1.0.0'
 }
 ```
 

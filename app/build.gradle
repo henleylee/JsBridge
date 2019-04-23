@@ -66,6 +66,6 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$supportVersion"
     implementation "com.google.code.gson:gson:$gsonVersion"
 //    implementation project(':jsbridge')
-    implementation 'com.henley.jsbridge:jsbridge:1.0.0'
+    implementation 'com.henley.android:jsbridge:1.0.0'
 
 }
