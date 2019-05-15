@@ -2,7 +2,7 @@
 //since comments will cause error when use in webview.loadurl,
 //comments will be remove by java use regexp
 (function() {
-    if (window.WebViewJavascriptBridge) {
+    if (window.bridge) {
         return;
     }
 
@@ -43,10 +43,10 @@
 
     // set default messageHandler
     function init(messageHandler) {
-        if (WebViewJavascriptBridge._messageHandler) {
-            throw new Error('WebViewJavascriptBridge.init called twice.');
+        if (bridge._messageHandler) {
+            throw new Error('bridge.init called twice.');
         }
-        WebViewJavascriptBridge._messageHandler = messageHandler;
+        bridge._messageHandler = messageHandler;
         var receivedMessages = receiveMessageQueue;
         receiveMessageQueue = null;
         for (var i = 0; i < receivedMessages.length; i++) {
@@ -126,7 +126,7 @@
                     };
                 }
 
-                var handler = WebViewJavascriptBridge._messageHandler;
+                var handler = bridge._messageHandler;
                 if (message.handlerName) {
                     // 通过队列拿到handler
                     handler = messageHandlers[message.handlerName];
@@ -136,7 +136,7 @@
                     handler(message.data, responseCallback);
                 } catch (exception) {
                     if (typeof console != 'undefined') {
-                        console.log("WebViewJavascriptBridge: WARNING: javascript handler threw.", message, exception);
+                        console.log("bridge: WARNING: javascript handler threw.", message, exception);
                     }
                 }
             }
@@ -154,7 +154,7 @@
         }
     }
 
-    var WebViewJavascriptBridge = window.WebViewJavascriptBridge = {
+    var bridge = window.bridge = {
         init: init,
         send: send,
         registerHandler: registerHandler,
@@ -167,7 +167,7 @@
     _createQueueReadyIframe(doc);
     _createQueueReadyIframe4biz(doc);
     var readyEvent = doc.createEvent('Events');
-    readyEvent.initEvent('WebViewJavascriptBridgeReady');
-    readyEvent.bridge = WebViewJavascriptBridge;
+    readyEvent.initEvent('JavascriptBridgeReady');
+    readyEvent.bridge = bridge;
     doc.dispatchEvent(readyEvent);
 })();

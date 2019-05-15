@@ -23,14 +23,14 @@ final class JsBridgeHelper {
     static final String JSBRIDGE_PROTOCOL_SCHEME = "bridge://";
     static final String JSBRIDGE_RETURN_DATA = JSBRIDGE_PROTOCOL_SCHEME + "return/";//格式为 bridge://return/{function}/returnContent
     static final String JSBRIDGE_FETCH_QUEUE = JSBRIDGE_RETURN_DATA + "_fetchQueue/";
-    static final String TO_LOAD_JS = "WebViewJavascriptBridge.js";
-    static final String JS_HANDLE_MESSAGE_FROM_JAVA = "javascript:WebViewJavascriptBridge._handleMessageFromNative('%s');";
-    static final String JS_FETCH_QUEUE_FROM_JAVA = "javascript:WebViewJavascriptBridge._fetchQueue();";
+    static final String TO_LOAD_JS = "bridge.js";
+    static final String JS_HANDLE_MESSAGE_FROM_JAVA = "javascript:bridge._handleMessageFromNative('%s');";
+    static final String JS_FETCH_QUEUE_FROM_JAVA = "javascript:bridge._fetchQueue();";
     private static final String EMPTY_CHAR = "";
     private static final String SPLIT_MARK = "/";
     private static final String UNDERLINE = "_";
     private static final String JAVASCRIPT = "javascript:";
-    private static final String CALLBACK_ID_FORMAT = "JAVA_CALLBACK_%s";
+    private static final String CALLBACK_ID_FORMAT = "java_callback_%s";
 
     /**
      * 从JS返回的Url中获取Data
@@ -144,7 +144,7 @@ final class JsBridgeHelper {
      * @param jsUrl Url
      */
     static String parseFunctionName(String jsUrl) {
-        return jsUrl.replace("javascript:WebViewJavascriptBridge.", "").replaceAll("\\(.*\\);", "");
+        return jsUrl.replace("javascript:bridge.", "").replaceAll("\\(.*\\);", "");
     }
 
     static String decode(String content) {
