@@ -21,7 +21,7 @@ publish {
     userOrg = 'henleylee'
     groupId = 'com.henley.android'
     artifactId = 'jsbridge'
-    publishVersion = '1.0.0'
+    publishVersion = '1.0.1'
     uploadName = 'JsBridge'
     desc = 'A bridge between Java and JavaScript.It provides safe and convenient way to call Java code from js and call js code from java.'
     website = siteUrl
