@@ -25,7 +25,7 @@ dependencies {
 
 ### APK Demo ###
 
-下载 [JSBridge](./JsBridge-v1.0.0.apk)
+下载 [JSBridge](./JsBridge-v1.0.1.apk)
 
 ## 4. 准备工作 ##
 #### 4.1 传送的消息结构见 Message 类： ####
